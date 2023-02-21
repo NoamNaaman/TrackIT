@@ -24,8 +24,13 @@ void DisableTVOC(void);
 void DisablePRES(void);
 
 
+void delay_us(u32 microsec);
+void delay_ms(u32 ms);
 
+void disable_GPS_uart(void);
+void disable_Cellular_uart(void);
 
+void SYSTICK_handler(void);
 
 
 #endif

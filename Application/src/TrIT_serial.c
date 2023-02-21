@@ -10,6 +10,7 @@
 #include "setup.h"
 #include "main.h"
 #include "serial.h"
+#include "prototypes.h"
 
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
@@ -83,45 +84,26 @@ void UART_receive_char(UART_HandleTypeDef *huart, u32 uartN)
 /////////////////////////////////////////////////////////////////////
 void USART2_receive_char(void)
   {
-  static u8 prevChars[8];
   u8 chr;
   u32 status;
   status = USART2->SR;
   if (status & UART_FLAG_RXNE)
     {
     chr = USART2->DR;
-    if (BypassDiscoMCU)
+    RxBuffer[2][RxInpIdx[2]] = chr;
+    if (++RxInpIdx[2] >= USART_IN_BUF_LEN)
       {
-      UART5->DR = chr;
-      prevChars[0] = prevChars[1];
-      prevChars[1] = prevChars[2];
-      prevChars[2] = prevChars[3];
-      prevChars[3] = prevChars[4];
-      prevChars[4] = chr;
-      if (chr == '9' && prevChars[3] == 'B' && prevChars[2] == 'Z' && prevChars[1] == 'J' && prevChars[0] == '$')
-        {
-        bypass_comm(0);
-//        bypass_comm(0);
-//        return;
-        }
+      RxInpIdx[2] = 0;
+      }
+    if (RxCount[2] < USART_IN_BUF_LEN)
+      {
+      RxCount[2]++;
       }
     else
       {
-      RxBuffer[2][RxInpIdx[2]] = chr;
-      if (++RxInpIdx[2] >= USART_IN_BUF_LEN)
-        {
-        RxInpIdx[2] = 0;
-        }
-      if (RxCount[2] < USART_IN_BUF_LEN)
-        {
-        RxCount[2]++;
-        }
-      else
-        {
-        RxOutIdx[2] = RxInpIdx[2];
-        }
-      PC_chars++;
+      RxOutIdx[2] = RxInpIdx[2];
       }
+    PC_chars++;
     }
   if (status & (UART_FLAG_ORE|UART_FLAG_NE|UART_FLAG_FE|UART_FLAG_PE))
     {

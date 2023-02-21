@@ -4,7 +4,7 @@
 #include "main.h"
 #include "stm32f1xx_hal.h"
 #include "setup.h"
-
+#include "prototypes.h"
 
 // Using Atmel serial EEPROM's (AT24C512B or AT24C1024B)
 
@@ -15,10 +15,40 @@
 
 u32 eeprom_write_timer;
 
+typedef enum {
+  I2C_MEM  = 1,
+  I2C_TVOC = 2,
+  I2C_PRES = 3,
+  } I2C_CHANNEL;
+
+I2C_CHANNEL I2C_channel;
+
+
+
 
 
 //--------------------------------------------------------------------------
+void SetSDA(u32 high_low)
+  {
+  switch (I2C_channel)
+    {
+    case I2C_MEM : output_pin(MEM_SDA,  high_low);
+    case I2C_TVOC: output_pin(TVOC_SDA, high_low);
+    case I2C_PRES: output_pin(PRES_SDA, high_low);
+    }
+  }
+
 //--------------------------------------------------------------------------
+void SetSCL(u32 high_low)
+  {
+  switch (I2C_channel)
+    {
+    case I2C_MEM : output_pin(MEM_SCL,  high_low);
+    case I2C_TVOC: output_pin(TVOC_SCL, high_low);
+    case I2C_PRES: output_pin(PRES_SCL, high_low);
+    }
+  }
+
 //--------------------------------------------------------------------------
 void delay_cycles(u32 cyc)
   {
@@ -62,27 +92,27 @@ bool IIC_Write(u8  send_bits)
     {
     if (send_bits & 0x80)
       {
-      output_high(SDA);
+      SetSDA(1);
       }
     else
       {
-      output_low(SDA);
+      SetSDA(0);
       }
     send_bits <<= 1;
 
     delay_cycles(3); // 8
-    output_high(SCL);
+    SetSCL(1);
     delay_cycles(3); // 17
-    output_low(SCL);
+    SetSCL(0);
     }
-  output_high(SDA);
+  SetSDA(1);
   output_float(SDA);
   delay_cycles(4); // 8
-  output_high(SCL);
+  SetSCL(1);
   Ack = input(SDA);
   delay_cycles(4); // 7
-  output_low(SCL);
-  output_high(SDA);
+  SetSCL(0);
+  SetSDA(1);
   output_drive(SDA);
   return !Ack;
   }
@@ -100,10 +130,10 @@ u8 IIC_ReadByte(void)
   delay_cycles(4);
   for (count = 0; count < 8; count++)
     {
-    output_high(SCL);
+    SetSCL(1);
     delay_cycles(3); // 10
     rec_bits = (rec_bits << 1) | input(SDA);
-    output_low(SCL);
+    SetSCL(0);
     delay_cycles(3); // 12
     }
   output_drive(SDA);
@@ -115,12 +145,12 @@ u8 IIC_ReadByte(void)
 //--------------------------------------------------------------------------
 void IIC_Start(void)
   {
-  output_high(SDA);
-  output_high(SCL);
+  SetSDA(1);
+  SetSCL(1);
   IIC_Delay();
-  output_low(SDA);
+  SetSDA(0);
   IIC_Delay();
-  output_low(SCL);
+  SetSCL(0);
   IIC_Delay();
   }
 
@@ -131,13 +161,13 @@ void IIC_Stop(void)
   {
   output_drive(SDA);
   output_drive(SCL);
-  output_low(SCL);
-  output_low(SDA);
+  SetSCL(0);
+  SetSDA(0);
   IIC_Delay();
-  output_high(SCL);
+  SetSCL(1);
   IIC_Delay();
   IIC_Delay();
-  output_high(SDA);
+  SetSDA(1);
   }
 
 
@@ -146,15 +176,13 @@ void IIC_Stop(void)
 //--------------------------------------------------------------------------
 void IIC_SendAck(void)
   {
-#ifndef HARDWARE_IIC
   output_drive(SDA);
-  output_low(SDA);
+  SetSDA(0);
   IIC_Delay();
-  output_high(SCL);
+  SetSCL(1);
   IIC_Delay();
-  output_low(SCL);
+  SetSCL(0);
   output_float(SDA);
-#endif
   }
 
 //--------------------------------------------------------------------------
@@ -162,13 +190,11 @@ void IIC_SendAck(void)
 //--------------------------------------------------------------------------
 void IIC_SendOne(void)
   {
-#ifndef HARDWARE_IIC
-  output_high(SDA);
+  SetSDA(1);
   IIC_Delay();
-  output_high(SCL);
+  SetSCL(1);
   IIC_Delay();
-  output_low(SCL);
-#endif
+  SetSCL(0);
   }
 
 //--------------------------------------------------------------------------
@@ -195,7 +221,6 @@ void IIC_SendOne(void)
 //==============================================================
 void wait_eeprom_write(u8 select)
   {
-//  return;
   while (eeprom_write_timer) // wait for previous eeprom write cycle to end
     {
     }
@@ -222,13 +247,14 @@ u8 set_eeprom_addr(u32 address)
   return ret;
   }
 
+//==============================================================
 u8 I2C_ack;
 u8 PrepareEEsession(u32 address, bool write)
   {
   u8 select;
   init_IIC();
   delay_cycles(30);
-  wait_eeprom_write(select);
+  wait_eeprom_write(0xAA);
   select = set_eeprom_addr(address);
   IIC_Stop();
 //  enable_ext_eeprom_write();
@@ -240,6 +266,7 @@ u8 PrepareEEsession(u32 address, bool write)
   return select;
   }
 
+//==============================================================
 void write_ext_eeprom(u32 address, u8 *data, u16 len)
   {
   u8 select, dat;
@@ -313,7 +340,7 @@ void read_ext_eeprom(u8 caller, u32 address, u8 *data, u16 len)
 //==============================================================
 void init_eeprom(void)
   {
-  u32 raddr, x, addr, loop;
+//  u32 raddr, x, addr, loop;
 //  u8 x;//, loop, buf[4];
   eeprom_write_timer = 0;
 

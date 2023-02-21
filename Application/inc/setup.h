@@ -198,4 +198,11 @@ void SetPinMode(GPIO_TypeDef* GPIOx, uint16_t Pin, GPIOModeFunc_TypeDef Mode);
 #define MAG_INT       GPIOC,9
 #define ACC_INT       GPIOC,10
 
+#define UART1_TX       GPIOA,9
+#define UART1_RX       GPIOA,10
+#define UART2_TX       GPIOA,2
+#define UART2_RX       GPIOA,3
+
+
+
 #endif

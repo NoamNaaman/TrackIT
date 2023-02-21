@@ -190,6 +190,7 @@ void setEN_CELLULAR(u32 onoff)
     }
   else
     {
+    
     output_high(EN_CELLULAR);
     }
   }
