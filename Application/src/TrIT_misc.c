@@ -103,3 +103,209 @@ void SYSTICK_handler(void)
     }
   }
 
+
+
+
+void setLED1(u32 onoff)
+  {
+  output_pin(LED1, onoff != 0);
+  }
+
+void setLED2(u32 onoff)
+  {
+  output_pin(LED2, onoff != 0);
+  }
+
+void setLED3(u32 onoff)
+  {
+  output_pin(LED3, onoff != 0);
+  }
+
+
+void setFL_PWR(u32 onoff)
+  {
+  if (onoff)
+    {
+    output_low(FL_PWR);
+    }
+  else
+    {
+    output_high(FL_PWR);
+    }
+  }
+
+void setSENSE_PWR(u32 onoff)
+  {
+  if (onoff)
+    {
+    output_low(SENSE_PWR);
+    }
+  else
+    {
+    output_high(SENSE_PWR);
+    }
+  }
+
+void setTVOC_PWR(u32 onoff)
+  {
+  if (onoff)
+    {
+    output_low(TVOC_PWR);
+    }
+  else
+    {
+    output_high(TVOC_PWR);
+    }
+  }
+
+void setEN_GPS(u32 onoff)
+  {
+  if (onoff)
+    {
+    output_low(EN_GPS);
+    }
+  else
+    {
+    output_high(EN_GPS);
+    }
+  }
+
+void setEN_5V(u32 onoff)
+  {
+  if (!onoff)
+    {
+    output_low(EN_5V);
+    }
+  else
+    {
+    output_high(EN_5V);
+    }
+  }
+
+void setEN_CELLULAR(u32 onoff)
+  {
+  if (onoff)
+    {
+    output_low(EN_CELLULAR);
+    }
+  else
+    {
+    output_high(EN_CELLULAR);
+    }
+  }
+
+void setEN_PRESSURE(u32 onoff)
+  {
+  if (onoff)
+    {
+    output_low(EN_PRESSURE);
+    }
+  else
+    {
+    output_high(EN_PRESSURE);
+    }
+  }
+
+void setEN_PHOTO(u32 onoff)
+  {
+  if (!onoff)
+    {
+    output_low(FL_PWR);
+    }
+  else
+    {
+    output_high(FL_PWR);
+    }
+  }
+
+
+void setFL_WP(u32 onoff)
+  {
+  if (onoff)
+    {
+    output_low(FL_WP);
+    }
+  else
+    {
+    output_high(FL_WP);
+    }
+  }
+
+void setFL_CS(u32 onoff)
+  {
+  if (onoff)
+    {
+    output_low(FL_CS);
+    }
+  else
+    {
+    output_high(FL_CS);
+    }
+  }
+
+
+void ResetCellular(void)
+  {
+  output_low(CELL_RST);
+  delay_us(100);
+  output_high(CELL_RST);
+  }
+
+void ResetFlash(void)
+  {
+  output_low(FL_RST);
+  delay_us(100);
+  output_high(FL_RST);
+  }
+
+void ResetTVOC(void)
+  {
+  output_low(TVOC_RES);
+  delay_us(100);
+  output_high(TVOC_RES);
+  }
+
+
+void EnableEEPROM(void)
+  {
+  output_drive(MEM_SCL);
+  output_drive(MEM_SDA);
+  output_high(MEM_SCL);
+  output_high(MEM_SDA);
+  }
+
+void EnableTVOC(void)
+  {
+  output_drive(TVOC_SCL);
+  output_drive(TVOC_SDA);
+  output_high(TVOC_SCL);
+  output_high(TVOC_SDA);
+  setTVOC_PWR(1);
+  }
+
+void EnablePRES(void)
+  {
+  output_drive(PRES_SCL);
+  output_drive(PRES_SDA);
+  output_high(PRES_SCL);
+  output_high(PRES_SDA);
+  setEN_PRESSURE(1);
+  }
+
+void DisableTVOC(void)
+  {
+  output_low(TVOC_SCL);
+  output_low(TVOC_SDA);
+  output_float(TVOC_SCL);
+  output_float(TVOC_SDA);
+  setTVOC_PWR(0);
+  }
+
+void DisablePRES(void)
+  {
+  output_low(PRES_SCL);
+  output_low(PRES_SDA);
+  output_float(PRES_SCL);
+  output_float(PRES_SDA);
+  setEN_PRESSURE(0);
+  }

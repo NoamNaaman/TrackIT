@@ -157,36 +157,45 @@ void SetPinMode(GPIO_TypeDef* GPIOx, uint16_t Pin, GPIOModeFunc_TypeDef Mode);
 
 
 
-#define TVOC_PWR      GPIOC,1
-#define EN_5V         GPIOC,2
-#define LED2          GPIOC,3
-#define UV_INPUT      GPIOC,4
-#define LED3          GPIOC,5
-#define EN_GPS        GPIOC,6
-#define EN_CELLULAR   GPIOC,7
-#define FL_WP         GPIOC,8
-#define MAG_INT       GPIOC,9
-#define ACC_INT       GPIOC,10
-#define MAG_RDY       GPIOC,11
-#define CELL_RST      GPIOC,12
-#define PIR           GPIOA,0
-#define PHOTO_INPUT   GPIOA,1
-#define TEMPERATURE   GPIOA,4
-#define FL_CS         GPIOA,8
 #define LED1          GPIOA,11
-#define TVOC_INT      GPIOA,12
-#define TVOC_RES      GPIOA,15
+#define LED2          GPIOC,3
+#define LED3          GPIOC,5
 
-#define PRES_SCL      GPIOB,0
-#define PRES_SDA      GPIOB,1
-#define SCL1          GPIOB,6
-#define SDA1          GPIOB,7
+#define FL_PWR        GPIOB,12
+#define SENSE_PWR     GPIOB,11
+#define TVOC_PWR      GPIOC,1
+
+#define EN_GPS        GPIOC,6
+#define EN_5V         GPIOC,2
+#define EN_CELLULAR   GPIOC,7
 #define EN_PRESSURE   GPIOB,8
 #define EN_PHOTO      GPIOB,10
-#define SENSE_PWR     GPIOB,11
-#define FL_PWR        GPIOB,12
+
+#define FL_WP         GPIOC,8
+#define FL_CS         GPIOA,8
+
+#define CELL_RST      GPIOC,12
 #define FL_RST        GPIOB,14
+#define TVOC_RES      GPIOA,15
+
+#define MEM_SCL       GPIOB,6
+#define MEM_SDA       GPIOB,7
 #define TVOC_SCL      GPIOD,0
 #define TVOC_SDA      GPIOD,1
+#define PRES_SCL      GPIOB,0
+#define PRES_SDA      GPIOB,1
+
+
+
+
+#define UV_INPUT      GPIOC,4
+#define TEMPERATURE   GPIOA,4
+#define MAG_RDY       GPIOC,11
+#define PIR           GPIOA,0
+#define PHOTO_INPUT   GPIOA,1
+
+#define TVOC_INT      GPIOA,12
+#define MAG_INT       GPIOC,9
+#define ACC_INT       GPIOC,10
 
 #endif
