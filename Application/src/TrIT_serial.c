@@ -10,6 +10,7 @@
 #include "setup.h"
 #include "main.h"
 #include "serial.h"
+#include "misc.h"
 #include "prototypes.h"
 
 extern UART_HandleTypeDef huart1;

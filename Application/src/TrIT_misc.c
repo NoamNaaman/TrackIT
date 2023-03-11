@@ -11,6 +11,10 @@ u32 TMR_1mS_Count,  TMR_10mS_Count; // used for timeout purposes by handler func
 u32 TMR_1min_count;
 u32 TMR_1min_Flags;
 
+u32 RunTime_milli;
+u32 RunTime_seconds;
+u32 RunTime_minutes;
+
 
 u8 set_1sec_flags = 0;
 
@@ -69,7 +73,7 @@ void SYSTICK_handler(void)
   {
   TMR_1mS_Flags = 0xFFFFFFFF;
   TMR_1mS_Count++;
- 
+  RunTime_milli++;
   if (!TMR_1mS_Cnt || TMR_1mS_Cnt == 5)
     {
     TMR_5mS_Flags = 0xFFFFFFFF;
@@ -87,10 +91,12 @@ void SYSTICK_handler(void)
         {
         set_1sec_flags = 0;
         TMR_1Sec_Flags = 0xFFFFFFFF;
+        RunTime_seconds++;
         if (++TMR_1min_count >= 60)
           {
           TMR_1min_count = 0;
           TMR_1min_Flags = 0xFFFFFFFF;
+          RunTime_minutes++;
           }
         }
 //      if (++update_dt >= 100) // update date time from RTC every 10 seconds
@@ -209,13 +215,14 @@ void setEN_PRESSURE(u32 onoff)
 
 void setEN_PHOTO(u32 onoff)
   {
+  output_drive(EN_PHOTO);
   if (!onoff)
     {
-    output_low(FL_PWR);
+    output_low(EN_PHOTO);
     }
   else
     {
-    output_high(FL_PWR);
+    output_high(EN_PHOTO);
     }
   }
 

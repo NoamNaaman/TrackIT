@@ -22,6 +22,7 @@ void EnableTVOC(void);
 void EnablePRES(void);
 void DisableTVOC(void);
 void DisablePRES(void);
+void set_I2C_channel(I2C_CHANNEL channel);
 
 
 void delay_us(u32 microsec);
